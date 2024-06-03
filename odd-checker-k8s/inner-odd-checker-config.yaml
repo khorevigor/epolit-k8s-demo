@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inner-odd-checker-config
+data:
+  inner-odd-checker-url: inner-odd-checker-service
+  inner-odd-checker-port: 7788
+  inner-odd-checker-endpoint: "/inner_odd_checker"

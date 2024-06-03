@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: outer-odd-checker-deployment
+spec:
+  selector:
+    matchLabels:
+      app: outer-odd-checker
+  template:
+    metadata:
+      labels:
+        app: outer-odd-checker
+    spec:
+      containers:
+      - name: outer-odd-checker
+        image: dsphoenix/outer-odd-checker:0.1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8899
+        env:
+          - name: INNER_ODD_CHECKER_URL
+            valueFrom:
+              configMapKeyRef:
+                name: inner-odd-checker-config
+                key: inner-odd-checker-url
+          - name: INNER_ODD_CHECKER_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: inner-odd-checker-config
+                key: inner-odd-checker-port
+          - name: INNER_ODD_CHECKER_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: inner-odd-checker-config
+                key: inner-odd-checker-endpoint
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: outer-odd-checker
+spec:
+  type: NodePort
+  selector:
+    app: outer-odd-checker
+  ports:
+  - protocol: TCP
+    port: 8899
+    targetPort: 8899
+    nodePort: 30111
